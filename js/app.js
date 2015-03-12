@@ -20,8 +20,12 @@ var allFeeds = [
     }, {
         name: 'Linear Digressions',
         url: 'http://feeds.feedburner.com/udacity-linear-digressions'
+    }, {
+        name: 'Testing Test',
+        url: 'kmwillia.com'
     }
 ];
+
 
 /* This function starts up our application. The Google Feed
  * Reader API is loaded asynchonously and will then call this
