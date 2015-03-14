@@ -31,7 +31,7 @@ $(function() {
          * url defined, and if the url is not empty
          */
         it('have a URL', function() {
-            for(i in allFeeds) {
+            for(var i in allFeeds) {
                 expect(allFeeds[i].url).toBeDefined();
                 expect(allFeeds[i].url).toBeTruthy();
             }
@@ -42,9 +42,9 @@ $(function() {
          * name defined, and if the url is not empty
          */
         it('have a name', function() {
-            for(i in allFeeds) {
+            for(var i in allFeeds) {
                 expect(allFeeds[i].name).toBeDefined();
-                expect(allFeeds[i].name).toBeTruthy();
+                expect(allFeeds[i].name.length).toBeGreaterThan(0);
             }
         });
     });
@@ -54,10 +54,10 @@ $(function() {
      * properly.
      */
     describe('The menu', function() {
+        var body = $('body');
         /* Tests whether the menu is initially hidden
          */
         it('is hidden initially', function() {
-            var body = $('body')
             expect(body.hasClass('menu-hidden')).toBe(true);
         });
 
@@ -67,7 +67,6 @@ $(function() {
          */
         it('toggles visibility on click', function() {
             var menuIconLink = $('.menu-icon-link');
-            var body = $('body');
             menuIconLink.click();
             expect(body.hasClass('menu-hidden')).toBe(false);
             menuIconLink.click();
@@ -80,8 +79,7 @@ $(function() {
      */
     describe('Initial Entries', function() {
 
-        /* No initial call to loadFeed exists in app.js
-         * so we need to call it ourselves. Padding along
+        /* Initialize to the first feed. Passing along
          * the done callback so we know when it's finished.
          */
         beforeEach(function(done) {
@@ -102,42 +100,31 @@ $(function() {
     /* This tests whether changing feeds actually pulls in new data
      */
     describe('New Feed Selection', function() {
-        var oldEntries;
+        var feed = $('.feed');
+        var oldContents;
 
-        /* Dispatch the loadFeed() to a new function
-         * that calls a copy of the original loadFeed with
-         * an additional callback argument [done] so we know
-         * when it is finished.
-         * Then force a click on the second menu item.
+        /* Call loadFeed to setup a base state for the test to run from.
          */
         beforeEach(function(done) {
-            var originalLoadFeed = window.loadFeed;
-            oldEntries = $('.feed .entry');
-            spyOn(window, 'loadFeed').and.callFake(function(origId, origCb) {
-                originalLoadFeed(origId, function() {
-                    if(origCb) origCb();
-                    done();
-                });
-            });
-            $('.feed-list li a')[1].click();
+            loadFeed(0, done);
+        });
+
+        /* Once feed 0 is loaded, save the contents for later comparisond.
+         * Then load feed 1
+         */
+        beforeEach(function(done) {
+            oldContents = feed.html();
+            loadFeed(1, done);
         });
 
         /* Tests whether the loadFeed() function has been called,
-         * and whether the contents of
+         * and whether the contents of the feed have changed
          */
-        it('loads new data on changing the feed', function() {
-            var newEntries = $('.feed .entry');
-            var oldString = '';
-            var newString = '';
-            expect(window.loadFeed).toHaveBeenCalled();
-            for(var i = 0; i < oldEntries.length; i++) {
-                oldString += oldEntries[i].innerHTML;
-            }
-            for(var i = 0; i < newEntries.length; i++) {
-                newString += newEntries[i].innerHTML;
-            }
-            expect(newString).not.toEqual(oldString);
-            console.log(newString,oldString);
+        it('loads and displays entries for new feed', function() {
+            var newContents = feed.html();
+            expect(oldContents.length).toBeGreaterThan(0);
+            expect(newContents.length).toBeGreaterThan(0);
+            expect(newContents).not.toEqual(oldContents);
         });
 
     });
