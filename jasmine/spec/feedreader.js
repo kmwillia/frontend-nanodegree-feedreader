@@ -39,11 +39,12 @@ $(function() {
 
 
         /* This tests whether each of the feeds in allFeeds has a
-         * name defined, and if the url is not empty
+         * name defined, and if the name is not empty
          */
         it('have a name', function() {
             for(var i in allFeeds) {
                 expect(allFeeds[i].name).toBeDefined();
+                expect(typeof allFeeds[i].name).toEqual('string');
                 expect(allFeeds[i].name.length).toBeGreaterThan(0);
             }
         });
@@ -103,18 +104,14 @@ $(function() {
         var feed = $('.feed');
         var oldContents;
 
-        /* Call loadFeed to setup a base state for the test to run from.
+        /* Initialize to first feed, saving off the results,
+         * then switch to second feed.
          */
         beforeEach(function(done) {
-            loadFeed(0, done);
-        });
-
-        /* Once feed 0 is loaded, save the contents for later comparisond.
-         * Then load feed 1
-         */
-        beforeEach(function(done) {
-            oldContents = feed.html();
-            loadFeed(1, done);
+            loadFeed(0, function() {
+                oldContents = feed.html();
+                loadFeed(1, done);
+            });
         });
 
         /* Tests whether the loadFeed() function has been called,
