@@ -8,7 +8,7 @@ describe('Test', function() {
             console.log(4); //Async finished, called fourth
             done(); //Done also calls the next queued function(beforeEach2)
             console.log(7); //Done above this is finished, called 7th
-        });
+        }, 3000);
         console.log(3); //Called third, and wait for done()
     });
 
@@ -18,7 +18,7 @@ describe('Test', function() {
             console.log(8); //Second Async, 8th
             done(); //Done also calls the the next queued function(it)
             console.log(11); //We're back after doing the it() called from within the done()
-        });
+        }, 1000);
         console.log(6); //Called 6th, this function is over, so return into the previous done, and continue on, while waiting for the next done
     });
 
@@ -29,13 +29,13 @@ describe('Test', function() {
             console.log(12); // Async is finished
             done(); //Done, there's no more queued functions, so we're good
             console.log(13); // Lastly, finish up with lucky 13
-        });
+        }, 200);
         console.log(10); //This function is over so return to the previous done, and wait for the next
     });
 
 });
 
 //Simulate an async function we want to wait for
-function someAsyncFunc(callback) {
-    setTimeout(callback, 1000);
+function someAsyncFunc(callback, timeout) {
+    setTimeout(callback, timeout);
 }
